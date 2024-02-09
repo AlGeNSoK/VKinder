@@ -1,5 +1,5 @@
 from pprint import pprint
-from vk_api import VKAPIClient
+from class_vk_api import VKAPIClient
 from configurations.configuration import token, user_id
 import time
 import datetime
@@ -20,21 +20,28 @@ def converted_sex(resp):
     return sex_id
 
 
-if __name__ == '__main__':
-    vk = VKAPIClient(token, user_id)
-
-    response = vk.user_info()
+def get_info_current_user(vkc):
+    response = vkc.user_info()
     age = calculate_age(response)
     city_id = response[0]['city']['id']
     sex_id = converted_sex(response)
+    return age, city_id, sex_id
 
+
+def find_user(vkc,age_, city_id_, sex_id_):
     user_info_list = []
-    for user in vk.user_search(age, city_id, sex_id)['response']['items']:
+    for user in vkc.user_search(age_, city_id_, sex_id_)['response']['items']:
         owner_id = user['id']
         user_info = {'full_name': f"{user['first_name']} {user['last_name']}",
                      'profile_link': f"https://vk.com/id{user['id']}",
-                     'photo_url': vk.get_list_foto_max_quality(owner_id)}
+                     'photo_url': vkc.get_list_foto_max_quality(owner_id)}
         user_info_list.append(user_info)
         time.sleep(0.25)
+    return user_info_list
 
-    pprint(user_info_list, width=120)
+
+if __name__ == '__main__':
+    vk = VKAPIClient(token, user_id)
+    found_users = find_user(vk, *get_info_current_user(vk))
+    pprint(found_users, width=120)
+    print(len(found_users))

@@ -27,7 +27,8 @@ class VKAPIClient:
     def user_search(self, age, city_id, sex_id):
         url = 'https://api.vk.com/method/users.search'
         params = self.get_common_params()
-        params.update({'count': 1000, 'city': city_id, 'sex': sex_id, 'status': 6, 'age_from': age, 'age_to':age})
+        params.update({'count': 1000, 'city': city_id, 'sex': sex_id, 'status': 6, 'has_photo': 1, 'age_from': age,
+                       'age_to':age})
         response = requests.get(url, params=params)
         return response.json()
 
