@@ -20,15 +20,22 @@ class VKAPIClient:
     def user_info(self):
         url = 'https://api.vk.com/method/users.get'
         params = self.get_common_params()
-        params.update({'fields': 'bdate, city, sex'})
+        params.update({'user_ids': self.user_id, 'fields': 'bdate, city, sex'})
+        response = requests.get(url, params=params)
+        return response.json()['response']
+
+    def get_city_id(self, city_name):
+        url = 'https://api.vk.com/method/database.getCities'
+        params = self.get_common_params()
+        params.update({'country_id': 1, 'count': 1000, 'need_all': 1, 'q': city_name})
         response = requests.get(url, params=params)
         return response.json()['response']
 
     def user_search(self, age, city_id, sex_id):
         url = 'https://api.vk.com/method/users.search'
         params = self.get_common_params()
-        params.update({'count': 1000, 'city': city_id, 'sex': sex_id, 'status': 6, 'has_photo': 1, 'age_from': age,
-                       'age_to':age})
+        params.update({'count': 1000, 'city_id': city_id, 'sex': sex_id, 'status': 6, 'has_photo': 1, 'age_from': age,
+                       'age_to': age})
         response = requests.get(url, params=params)
         return response.json()
 
